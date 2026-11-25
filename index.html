@@ -795,7 +795,9 @@ const isSvc=g=>!!g.id_kind&&g.id_kind!=="id"&&g.id_kind!=="code";
 const isGift=g=>g.id_kind==="code";
 // Sovg'a kartalari ichida: avval o'yin kartalari (Roblox, Minecraft, Steam ...), keyin qolgan xizmat kartalari (Discord, Netflix ...). Ro'yxatga yangi o'yin kartasi qo'shish: GIFT_GAME_RE ga so'z qo'shing
 const GIFT_GAME_RE=/roblox|minecraft|steam|playstation|psn|xbox|nintendo|fortnite|valorant|riot|epic|razer|blizzard|battle[\s.-]*net|\bea\b|origin|ubisoft|garena|free[\s-]*fire|pubg|google[\s-]*play|app[\s-]*store|itunes/;
-const giftKey=g=>GIFT_GAME_RE.test(((g.code||"")+" "+(g.name||"")).toLowerCase())?0:1;
+// Sovg'a kartalarining qat'iy tartibi (yuqoridan pastga). Ro'yxatda yo'qlari: avval o'yin kartalari, keyin qolganlari (alifbo bo'yicha)
+const GIFT_ORDER=[/roblox/,/ea[\s-]*sports|fc[\s-]*26/,/minecraft/,/steam/,/battlefield/,/pubg/,/honor[\s-]*of[\s-]*kings|\bhok\b/,/new[\s-]*state/];
+const giftKey=g=>{const t=((g.code||"")+" "+(g.name||"")).toLowerCase(),i=GIFT_ORDER.findIndex(r=>r.test(t));return i>=0?i:GIFT_GAME_RE.test(t)?50:100};
 // Katalogda birinchi turadigan eng ko'p o'ynaladigan o'yinlar (shu tartibda). Kod yoki nom bo'yicha topiladi.
 const TOP_RE=[/pubg[\s-]*mobile/,/free[\s-]*fire/,/standoff/,/mobile[\s-]*legends(?!.*adventure)/];
 const TOP_BADGE=0; // "🔥 TOP" belgisi faqat TOP_RE[0] (PUBG Mobile) ga. Boshqa o'yinga ham qo'yish uchun: [0,1,2,3]
