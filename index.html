@@ -793,6 +793,9 @@ const th=g=>{const b=THEME[g.code]||THEME[ALI[g.code]]||DEF;return {...b,img:abs
 const isSvc=g=>!!g.id_kind&&g.id_kind!=="id"&&g.id_kind!=="code";
 // Sovg'a kartalari (Roblox, Steam, Amazon ...): to'lovdan keyin KOD beriladi. Katalogda alohida "Sovg'a kartalari" bo'limi/filtri
 const isGift=g=>g.id_kind==="code";
+// Sovg'a kartalari ichida: avval o'yin kartalari (Roblox, Minecraft, Steam ...), keyin qolgan xizmat kartalari (Discord, Netflix ...). Ro'yxatga yangi o'yin kartasi qo'shish: GIFT_GAME_RE ga so'z qo'shing
+const GIFT_GAME_RE=/roblox|minecraft|steam|playstation|psn|xbox|nintendo|fortnite|valorant|riot|epic|razer|blizzard|battle[\s.-]*net|\bea\b|origin|ubisoft|garena|free[\s-]*fire|pubg|google[\s-]*play|app[\s-]*store|itunes/;
+const giftKey=g=>GIFT_GAME_RE.test(((g.code||"")+" "+(g.name||"")).toLowerCase())?0:1;
 // Katalogda birinchi turadigan eng ko'p o'ynaladigan o'yinlar (shu tartibda). Kod yoki nom bo'yicha topiladi.
 const TOP_RE=[/pubg[\s-]*mobile/,/free[\s-]*fire/,/standoff/,/mobile[\s-]*legends(?!.*adventure)/];
 const TOP_BADGE=0; // "🔥 TOP" belgisi faqat TOP_RE[0] (PUBG Mobile) ga. Boshqa o'yinga ham qo'yish uchun: [0,1,2,3]
@@ -860,7 +863,7 @@ let shopF="all";
 function setFilter(f){shopF=f;document.querySelectorAll("#fl button").forEach(b=>b.classList.toggle("on",b.dataset.f===f));renderShop();hap()}
 function clearQ(){const i=$("#q");i.value="";renderShop();i.focus()}
 function renderShop(){const q=$("#q").value.trim().toLowerCase(),b=$("#sg");b.innerHTML="";$("#qx").style.display=$("#q").value?"flex":"none";
-  const ok=g=>g.name.toLowerCase().includes(q)||(g.regions||[]).some(r=>String(r.name).toLowerCase().includes(q)),sv=games.filter(isSvc).filter(ok),gf=games.filter(isGift).filter(ok).sort((a,c)=>String(a.name).localeCompare(String(c.name))),
+  const ok=g=>g.name.toLowerCase().includes(q)||(g.regions||[]).some(r=>String(r.name).toLowerCase().includes(q)),sv=games.filter(isSvc).filter(ok),gf=games.filter(isGift).filter(ok).sort((a,c)=>giftKey(a)-giftKey(c)||String(a.name).localeCompare(String(c.name))),
     gm=games.filter(g=>!isSvc(g)&&!isGift(g)).filter(ok).sort((a,c)=>topKey(a)-topKey(c));
   const sec=(title,list)=>{const h=document.createElement("h2");h.textContent=title;b.appendChild(h);const gg=document.createElement("div");gg.className="gg";gg.style.marginTop="0";list.forEach(g=>gg.appendChild(gcard(g)));b.appendChild(gg)};
   if(shopF==="svc"){if(sv.length)sec(tr("svcSec"),sv)}
